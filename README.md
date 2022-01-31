@@ -60,7 +60,6 @@ Obviously, only log in if you trust whoever is hosting the bot, as they can theo
 
 ## Acknowledgements
 
-- [Hamper](https://github.com/OwOHamper/) for the idea and [the code](https://github.com/OwOHamper/Valorant-item-shop-discord-bot/blob/main/item_shop_viewer.py) showing how to do it
-- [Valorant-api](https://dash.valorant-api.com/) for skin names and images
-- [warriorzz](https://github.com/warriorzz) for setting up the Docker
-- [The discord server](https://discord.gg/a9yzrw3KAm), join here!
+- Forked from [SkinPeek](https://github.com/giorgi-o/SkinPeek) for the shop and shop alert functionality
+- Match up idea from [WAIUA](https://github.com/Soneliem/WAIUA)
+- [Valorant-api](https://dash.valorant-api.com/) for images
