@@ -15,18 +15,6 @@ By default, the bot doesn't store your username/password, it only uses them to g
 You can log in using [your auth.riotgames.com cookies](https://github.com/giorgi-o/SkinPeek/wiki/How-to-get-your-Riot-cookies) using `/cookies` to avoid sending your password, and you can delete your account from the bot using `/forget`.  
 Obviously, only log in if you trust whoever is hosting the bot, as they can theoretically do anything with your account.  
 
-## Future Improvements
-
-* ~~Balance~~
-* ~~Auto fetch skins on startup~~
-* ~~Skin notifier/reminder~~
-* ~~Show weapon rarity~~
-* ~~Auto check for new Valorant version~~
-* See current bundles
-* Inspect weapon skin (all 4 levels + videos + radianite upgrade price)
-* Option to send shop automatically every day
-* Admin commands (delete user, see/edit everyone's alerts, etc.)
-
 ## Acknowledgements
 
 - Forked from [SkinPeek](https://github.com/giorgi-o/SkinPeek) for the shop and shop alert functionality
