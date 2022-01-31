@@ -100,11 +100,14 @@ export const isMaintenance = (json) => {
 
 // discord utils
 
-import {rarityEmoji} from "./emoji.js";
+import {compTierEmoji, rarityEmoji} from "./emoji.js";
 import {MessageActionRow, MessageButton, Permissions, Util} from "discord.js";
 
 export const VAL_COLOR_1 = 0xFD4553;
 export const VAL_COLOR_2 = 0x0F1923;
+
+export const VAL_BLUE_TEAM_COLOR = 0x58ddc4;
+export const VAL_RED_TEAM_COLOR = 0xf46c7c;
 
 export const escapeMarkdown = Util.escapeMarkdown;
 
@@ -138,6 +141,11 @@ export const skinNameAndEmoji = async (skin, channel) => {
     if(!skin.rarity) return skin.name;
     const rarityIcon = await rarityEmoji(channel.guild, skin.rarity.name, skin.rarity.icon, externalEmojisAllowed(channel));
     return rarityIcon ? `${rarityIcon} ${skin.name}` : skin.name;
+}
+
+export const compTier = async (tier, channel) => {
+    const tierIcon = await compTierEmoji(channel.guild, tier.tier, tier.smallIcon, externalEmojisAllowed(channel));
+    return tierIcon ? `${tierIcon}` : tier.tierName;
 }
 
 export const removeAlertButton = (id, uuid) => new MessageButton().setCustomId(`removealert/${uuid}/${id}/${Math.round(Math.random() * 10000)}`).setStyle("DANGER").setLabel("Remove Alert").setEmoji("✖");

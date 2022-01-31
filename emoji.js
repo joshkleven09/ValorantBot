@@ -11,6 +11,8 @@ export const RadEmoji = async (guild, externalEmojisAllowed=false) => await getO
 
 export const rarityEmoji = async (guild, name, icon, externalEmojisAllowed=false) => await getOrCreateEmoji(guild, `${name}Rarity`, icon, externalEmojisAllowed);
 
+export const compTierEmoji = async (guild, name, icon, externalEmojisAllowed=false) => await getOrCreateEmoji(guild, `Tier${name}Icon`, icon, externalEmojisAllowed);
+
 const getOrCreateEmoji = async (guild, name, filenameOrUrl, externalEmojisAllowed) => {
     if(!guild || !name || !filenameOrUrl) return;
 

@@ -9,7 +9,7 @@ import {
     redeemUsernamePassword
 } from "./Valorant/auth.js";
 import {loadConfig} from "./config.js";
-import {RadEmoji, VPEmoji} from "./emoji.js";
+import {compTierEmoji, RadEmoji, VPEmoji} from "./emoji.js";
 import {
     addAlert,
     alertExists, alertsForUser,
@@ -31,7 +31,10 @@ import {
     removeAlertActionRow,
     removeAlertButton,
     externalEmojisAllowed,
-    emojiToString
+    emojiToString,
+    VAL_BLUE_TEAM_COLOR,
+    VAL_RED_TEAM_COLOR,
+    compTier
 } from "./util.js";
 
 import {
@@ -66,6 +69,8 @@ client.on("ready", async () => {
     refreshSkinList().then(() => console.log("Skins loaded!"));
 
     setClient(client);
+
+    
 
     // check alerts every day at 00:00:10 GMT
     cron.schedule(config.refreshSkins, checkAlerts, {timezone: "GMT"});
@@ -150,7 +155,11 @@ const commands = [
     },
     {
         name: "match",
-        description: "Fetch your current match information"
+        description: "Fetch your current match information and make it visible only to you"
+    },
+    {
+        name: "match-share",
+        description: "Fetch your current match information and share it with the channel"
     }
 ];
 
@@ -556,20 +565,27 @@ client.on("interactionCreate", async (interaction) => {
                 });
                 break;
             }
+            case "match-share":
             case "match": {
                 const valorantUser = getUser(interaction.user.id);
+                //const valorantUser = {puuid: "233", tag: "tester"}
                 if(!valorantUser) return await interaction.reply({
                     embeds: [basicEmbed("**You're not registered with the bot!** Try `/login` or `/cookies`.")],
                     ephemeral: true
                 });
 
                 //todo what is this and why is it needed if we just await everything anyways
-                await interaction.deferReply({ephemeral: false});
+                await interaction.deferReply({ephemeral: interaction.commandName !== "match-share"});
+
+                const compTiers = await getLatestCompTiers()
+                for await (const tier of compTiers) {
+                    await compTierEmoji(interaction.channel.guild, tier.tier, tier.smallIcon, externalEmojisAllowed(interaction.channel))
+                }
 
                 const currMatchId = await getCurrentMatchId(interaction.user.id);
 
                 if(!currMatchId) return await interaction.followUp({
-                    embeds: [basicEmbed("Could not fetch your current match, you are either not logged in or not in a match. Try logging in again.")],
+                    embeds: [basicEmbed("Could not fetch your current match, you are either not logged in or not in a match. Try again.")],
                     ephemeral: true
                 });
                 if(currMatchId === MAINTENANCE) return await interaction.followUp({
@@ -587,13 +603,7 @@ client.on("interactionCreate", async (interaction) => {
                     }
                 });
 
-                const embeds = [{
-                    description: `Player data for current match`,
-                    color: VAL_COLOR_1
-                }];
-
                 const allPlayerDetails = await getPlayers(interaction.user.id, matchPlayers.map(player => player.Subject));
-                const compTiers = await getLatestCompTiers()
 
                 const players = matchPlayers.map(matchPlayer => {
                     const playerDetails = allPlayerDetails.find(playerDetail => playerDetail.Subject === matchPlayer.Subject)
@@ -604,19 +614,123 @@ client.on("interactionCreate", async (interaction) => {
                     }
                 })
 
+                // const players = [
+                //     {
+                //         Subject: "1224",
+                //         Team: "Blue",
+                //         Agent: "Jett",
+                //         AccountLevel: 123,
+                //         GameName: "Dark",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Red",
+                //         Agent: "Brim",
+                //         AccountLevel: 35,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Blue",
+                //         Agent: "Omen",
+                //         AccountLevel: 33,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Blue",
+                //         Agent: "Cypher",
+                //         AccountLevel: 34,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Blue",
+                //         Agent: "Killjoy",
+                //         AccountLevel: 763,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Blue",
+                //         Agent: "Reyna",
+                //         AccountLevel: 18,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "35",
+                //         Team: "Red",
+                //         Agent: "Reyna",
+                //         AccountLevel: 3,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Red",
+                //         Agent: "Killjoy",
+                //         AccountLevel: 6,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Red",
+                //         Agent: "Viper",
+                //         AccountLevel: 3,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     },
+                //     {
+                //         Subject: "12445",
+                //         Team: "Red",
+                //         Agent: "Neon",
+                //         AccountLevel: 7,
+                //         GameName: "Light",
+                //         TagLine: ""
+                //     }
+                // ]
+
                 console.log(players)
 
-                for await (const player of players.slice(0, 9)) {
+                for await (const player of players.slice(0, 10)) {
                     const playerLatestTier = (await getMMR(interaction.user.id, player.Subject)).TierAfterUpdate;
+                    player.LatestTier = await compTier(compTiers.find(tier => tier.tier === playerLatestTier), interaction.channel)
+                }
+                const interactionPlayer = players.find(player => player.Subject === valorantUser.puuid) || {Team: "Blue"}
 
-                    const embed = {
-                        title: `${player.Agent}\t${player.GameName}\t${compTiers.find(tier => tier.tier === playerLatestTier).tierName}\t${player.AccountLevel}`,
-                        color: VAL_COLOR_2
-                    };
-                    embeds.push(embed);
+                const blueTeam = players.filter(player => player.Team === "Blue")
+                const redTeam = players.filter(player => player.Team === "Red")
+
+                const blueTeamEmbed = {
+                    color: VAL_BLUE_TEAM_COLOR,
+                    title: interactionPlayer.Team === "Blue" ? "Your Team": "Enemy Team",
+                    fields: blueTeam.map(player => {
+                        return {
+                            name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
+                            value: `Account Level: ${player.AccountLevel}`
+                        }
+                    })
                 }
 
-                await interaction.followUp({embeds});
+                const redTeamEmbed = {
+                    color: VAL_RED_TEAM_COLOR,
+                    title: interactionPlayer.Team === "Red" ? "Your Team": "Enemy Team",
+                    fields: redTeam.map(player => {
+                        return {
+                            name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
+                            value: `Account Level: ${player.AccountLevel}`
+                        }
+                    })
+                }
+
+                await interaction.followUp({embeds: interactionPlayer.Team === "Blue" ? [blueTeamEmbed, redTeamEmbed] : [redTeamEmbed, blueTeamEmbed]});
                 console.log(`Sent ${interaction.user.tag}'s current match!`);
 
                 break;

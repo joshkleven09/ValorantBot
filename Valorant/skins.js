@@ -333,7 +333,7 @@ export const getLatestCompTiers = async () => {
 }
 
 export const getAgents = async () => {
-    const response = await fetch(`https://valorant-api.com/v1/agents`);
+    const response = await fetch(`https://valorant-api.com/v1/agents?isPlayableCharacter=true`);
     console.assert(response.statusCode === 200, `Valorant get agents is ${response.statusCode}!`, response);
     const jsonData = JSON.parse(response.body).data
     return jsonData;
