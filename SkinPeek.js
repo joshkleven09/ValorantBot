@@ -596,10 +596,11 @@ client.on("interactionCreate", async (interaction) => {
                 const agents = await getAgents()
                 const matchPlayers = (await getMatch(interaction.user.id, currMatchId)).map(player => {
                     console.log(player)
+                    console.log(`Agent: ${agents.find(agent => agent.uuid.toLowerCase() === player.CharacterID.toLowerCase())}`)
                     return {
-                        Subject: player.Subject,
+                        Subject: player.Subject.toLowerCase(),
                         Team: player.TeamID,
-                        Agent: agents.find(agent => agent.uuid === player.CharacterID).displayName,
+                        Agent: agents.find(agent => agent.uuid.toLowerCase() === player.CharacterID.toLowerCase()).displayName,
                         AccountLevel: player.PlayerIdentity.AccountLevel
                     }
                 });
