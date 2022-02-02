@@ -595,8 +595,6 @@ client.on("interactionCreate", async (interaction) => {
 
                 const agents = await getAgents()
                 const matchPlayers = (await getMatch(interaction.user.id, currMatchId)).map(player => {
-                    console.log(player)
-                    console.log(`Agent: ${agents.find(agent => agent.uuid.toLowerCase() === player.CharacterID.toLowerCase())}`)
                     return {
                         Subject: player.Subject.toLowerCase(),
                         Team: player.TeamID,
@@ -606,7 +604,6 @@ client.on("interactionCreate", async (interaction) => {
                 });
 
                 const allPlayerDetails = await getPlayers(interaction.user.id, matchPlayers.map(player => player.Subject));
-                console.log(allPlayerDetails)
                 const players = matchPlayers.map(matchPlayer => {
                     const playerDetails = allPlayerDetails.find(playerDetail => playerDetail.Subject === matchPlayer.Subject)
                     return {
@@ -698,8 +695,6 @@ client.on("interactionCreate", async (interaction) => {
                 //         TagLine: ""
                 //     }
                 // ]
-
-                console.log(players)
 
                 for await (const player of players.slice(0, 10)) {
                     const playerLatestTier = (await getMMR(interaction.user.id, player.Subject)).TierAfterUpdate;
