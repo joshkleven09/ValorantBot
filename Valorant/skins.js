@@ -288,6 +288,7 @@ export const getPlayers = async (userId, playerIds) => {
 
     const user = getUser(userId);
     
+    console.debug(`Fetching player names from list of ${playerIds}`);
     const req = await fetch(`https://pd.${user.region}.a.pvp.net/name-service/v2/players`, {
         headers: {
             "Authorization": "Bearer " + user.rso,
@@ -310,6 +311,7 @@ export const getMMR = async (userId, mmrToGet) => {
 
     const user = getUser(userId);
     
+    console.debug(`Getting MMR data for player ${mmrToGet}`);
     const req = await fetch(`https://pd.${user.region}.a.pvp.net/mmr/v1/players/${mmrToGet}/competitiveupdates?queue=competitive`, {
         headers: {
             "Authorization": "Bearer " + user.rso,
@@ -326,6 +328,7 @@ export const getMMR = async (userId, mmrToGet) => {
 }
 
 export const getLatestCompTiers = async () => {
+    console.debug(`Getting comp tier data`);
     const response = await fetch(`https://valorant-api.com/v1/competitivetiers`);
     console.assert(response.statusCode === 200, `Valorant get comp tiers is ${response.statusCode}!`, response);
     const jsonData = JSON.parse(response.body).data
@@ -333,6 +336,7 @@ export const getLatestCompTiers = async () => {
 }
 
 export const getAgents = async () => {
+    console.debug(`Getting agent data`);
     const response = await fetch(`https://valorant-api.com/v1/agents?isPlayableCharacter=true`);
     console.assert(response.statusCode === 200, `Valorant get agents is ${response.statusCode}!`, response);
     const jsonData = JSON.parse(response.body).data

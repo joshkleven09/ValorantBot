@@ -595,6 +595,7 @@ client.on("interactionCreate", async (interaction) => {
 
                 const agents = await getAgents()
                 const matchPlayers = (await getMatch(interaction.user.id, currMatchId)).map(player => {
+                    console.log(player)
                     return {
                         Subject: player.Subject,
                         Team: player.TeamID,
@@ -604,7 +605,7 @@ client.on("interactionCreate", async (interaction) => {
                 });
 
                 const allPlayerDetails = await getPlayers(interaction.user.id, matchPlayers.map(player => player.Subject));
-
+                console.log(allPlayerDetails)
                 const players = matchPlayers.map(matchPlayer => {
                     const playerDetails = allPlayerDetails.find(playerDetail => playerDetail.Subject === matchPlayer.Subject)
                     return {
