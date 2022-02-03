@@ -579,7 +579,7 @@ client.on("interactionCreate", async (interaction) => {
 
                 const compTiers = await getLatestCompTiers()
                 for await (const tier of compTiers) {
-                    await compTierEmoji(interaction.channel.guild, tier.tier, tier.smallIcon, externalEmojisAllowed(interaction.channel))
+                    await compTierEmoji(interaction.channel.guild, tier.tierName.toLowerCase().replaceAll(" ", "_"), tier.smallIcon, externalEmojisAllowed(interaction.channel))
                 }
 
                 const currMatchId = await getCurrentMatchId(interaction.user.id);
@@ -710,8 +710,8 @@ client.on("interactionCreate", async (interaction) => {
                     title: interactionPlayer.Team === "Blue" ? "Your Team": "Enemy Team",
                     fields: blueTeam.map(player => {
                         return {
-                            name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
-                            value: `Account Level: ${player.AccountLevel}`
+                            name: `${player.LatestTier}\t\t${player.Agent}\t\t${player.GameName}`,
+                            value: `Level: ${player.AccountLevel}`
                         }
                     })
                 }
@@ -721,8 +721,8 @@ client.on("interactionCreate", async (interaction) => {
                     title: interactionPlayer.Team === "Red" ? "Your Team": "Enemy Team",
                     fields: redTeam.map(player => {
                         return {
-                            name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
-                            value: `Account Level: ${player.AccountLevel}`
+                            name: `${player.LatestTier}\t\t${player.Agent}\t\t${player.GameName}`,
+                            value: `Level: ${player.AccountLevel}`
                         }
                     })
                 }
@@ -792,6 +792,10 @@ client.on("interactionCreate", async (interaction) => {
         }
     }
 });
+
+function sleep(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  }
 
 client.on("channelDelete", channel => {
     removeAlertsInChannel(channel.id);

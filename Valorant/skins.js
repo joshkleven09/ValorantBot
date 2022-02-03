@@ -343,4 +343,14 @@ export const getAgents = async () => {
     return jsonData;
 }
 
+export const getPreviousSeasonId = async (currentSeasonId) => {
+    console.debug(`Getting season data`);
+    const response = await fetch(`https://valorant-api.com/v1/seasons/competitive`);
+    console.assert(response.statusCode === 200, `Valorant get comp seasons is ${response.statusCode}!`, response);
+    const jsonData = JSON.parse(response.body).data
+    const actualSeasons = jsonData.filter(data => data.borders != null)
+    const currentSeasonIdx = actualSeasons.findIndex(data => data.seasonUuid === currentSeasonId)
+    return actualSeasons[currentSeasonId - 1].seasonUuid
+}
+
 
