@@ -13,12 +13,15 @@ import {getBalance, getShop, getSkin, searchSkin} from "../Valorant/skins.js";
 import {addAlert, alertExists, alertsForUser, removeAlertsInChannel} from "./alerts.js";
 import {MessageActionRow, MessageSelectMenu} from "discord.js";
 
+
 export const getValorantShop = (discordId, discordTag, discordChannel, discordGuild) => {
+    const user = getUser(discordId)
+
+    if (!user) return [basicEmbed("**You're not registered with the bot!** Try `/login`.")]
+    const emojiPromise = VPEmoji(discordGuild, externalEmojisAllowed(discordChannel))
+
     return getShop(discordId)
         .then(async shop => {
-            const user = getUser(discordId)
-            if (!user) return [basicEmbed("**You're not registered with the bot!** Try `/login`.")]
-            const emojiPromise = VPEmoji(discordGuild, externalEmojisAllowed(discordChannel))
             if (!shop) return [basicEmbed("Could not fetch your shop, most likely you got logged out. Try logging in again.")]
             if (shop === MAINTENANCE) return [basicEmbed("**Valorant servers are currently down for maintenance!** Try again later.")]
 
