@@ -144,7 +144,7 @@ export const skinNameAndEmoji = async (skin, channel) => {
 }
 
 export const compTier = async (tier, channel) => {
-    const tierIcon = await compTierEmoji(channel.guild, tier.tier, tier.smallIcon, externalEmojisAllowed(channel));
+    const tierIcon = await compTierEmoji(channel.guild, tier.tierName, tier.smallIcon, externalEmojisAllowed(channel));
     return tierIcon ? `${tierIcon}` : tier.tierName;
 }
 

@@ -580,7 +580,7 @@ client.on("interactionCreate", async (interaction) => {
                 const compSeasons = await getCompSeasons()
                 const compTiers = await getLatestCompTiers()
                 for await (const tier of compTiers) {
-                    await compTierEmoji(interaction.channel.guild, tier.tierName.toLowerCase().replaceAll(" ", "_"), tier.smallIcon, externalEmojisAllowed(interaction.channel))
+                    await compTierEmoji(interaction.channel.guild, tier.tierName, tier.smallIcon, externalEmojisAllowed(interaction.channel))
                 }
 
                 const currMatchId = await getCurrentMatchId(interaction.user.id);
