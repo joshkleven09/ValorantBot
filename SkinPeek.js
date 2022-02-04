@@ -699,12 +699,21 @@ client.on("interactionCreate", async (interaction) => {
 
                 for await (const player of players.slice(0, 10)) {
                     const latestCompResult = (await getLatestCompResult(interaction.user.id, player.Subject));
-                    const playerLatestTier = latestCompResult.TierAfterUpdate;
-                    const currentSeasonIdx = compSeasons.findIndex(data => data.seasonUuid === latestCompResult.SeasonID)
-                    const lastSeasonId = compSeasons[currentSeasonIdx - 1].seasonUuid
-                    const playerMMRsBySeason = (await getMMRs(interaction.user.id, player.Subject))
-                    const lastSeasonTier = playerMMRsBySeason[lastSeasonId].CompetitiveTier
-                    
+                    let playerLatestTier = 0
+                    let lastSeasonTier = 0
+                    if (latestCompResult) {
+                        playerLatestTier = latestCompResult.TierAfterUpdate;
+                        const currentSeasonIdx = compSeasons.findIndex(data => data.seasonUuid === latestCompResult.SeasonID)
+                        const lastSeasonId = compSeasons[currentSeasonIdx - 1].seasonUuid
+                        const playerMMRsBySeason = (await getMMRs(interaction.user.id, player.Subject))
+
+                        if(playerMMRsBySeason) {
+                            lastSeasonTier = playerMMRsBySeason[lastSeasonId].CompetitiveTier || 0
+                        }
+                        
+                    }
+
+
                     player.LatestTier = await compTier(compTiers.find(tier => tier.tier === playerLatestTier), interaction.channel)
                     player.LastSeasonTier = await compTier(compTiers.find(tier => tier.tier === lastSeasonTier), interaction.channel)
                 }

@@ -324,7 +324,7 @@ export const getLatestCompResult = async (userId, mmrToGet) => {
     const json = JSON.parse(req.body);
     if(isMaintenance(json)) return MAINTENANCE;
 
-    return json.Matches[0];
+    return json.Matches[0] || undefined;
 }
 
 
@@ -348,7 +348,7 @@ export const getMMRs = async (userId, mmrToGet) => {
     const json = JSON.parse(req.body);
     if(isMaintenance(json)) return MAINTENANCE;
     
-    return json.QueueSkills.competitive.SeasonalInfoBySeasonID;
+    return json.QueueSkills.competitive.SeasonalInfoBySeasonID || undefined;
 }
 
 export const getLatestCompTiers = async () => {
