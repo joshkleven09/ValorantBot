@@ -1,7 +1,7 @@
 {
-  "name": "skin-peek",
+  "name": "valorant-bot",
   "version": "1.2.1",
-  "main": "SkinPeek.js",
+  "main": "src/ValorantBot.js",
   "dependencies": {
     "discord.js": "^13.6.0",
     "fuse.js": "^6.5.3",

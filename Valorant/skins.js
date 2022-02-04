@@ -2,9 +2,9 @@ import fs from "fs";
 
 import Fuse from "fuse.js";
 
-import {asyncReadJSONFile, fetch, isMaintenance, MAINTENANCE} from "../util.js";
+import {asyncReadJSONFile, fetch, isMaintenance, MAINTENANCE} from "../src/util.js";
 import {authUser, deleteUser, getUser, getUserList} from "./auth.js";
-import config from "../config.js";
+import config from "../src/config.js";
 
 const formatVersion = 2;
 let gameVersion = null;
@@ -28,7 +28,7 @@ const getValorantVersion = async () => {
     return json.data.manifestId;
 }
 
-const loadSkinsJSON = async (filename="skins.json") => {
+const loadSkinsJSON = async (filename="./storage/skins.json") => {
     const jsonData = await asyncReadJSONFile(filename).catch(() => {});
     if(!jsonData) return;
 
@@ -40,7 +40,7 @@ const loadSkinsJSON = async (filename="skins.json") => {
     return jsonData.formatVersion;
 }
 
-const saveSkinsJSON = (filename="skins.json") => {
+const saveSkinsJSON = (filename="./storage/skins.json") => {
     fs.writeFileSync(filename, JSON.stringify({formatVersion, gameVersion, skins, prices, rarities}, null, 2));
 }
 
@@ -324,7 +324,7 @@ export const getLatestCompResult = async (userId, mmrToGet) => {
     const json = JSON.parse(req.body);
     if(isMaintenance(json)) return MAINTENANCE;
 
-    return json.Matches[0] || undefined;
+    return json.Matches ? json.Matches[0] : undefined;
 }
 
 

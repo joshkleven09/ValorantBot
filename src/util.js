@@ -118,6 +118,13 @@ export const basicEmbed = (content) => {
     }
 }
 
+export const basicReply = (interaction, msg, ephemeral = true) => {
+    return interaction.reply({
+        embeds: [basicEmbed(msg)],
+        ephemeral: ephemeral
+    })
+}
+
 export const secondaryEmbed = (content) => {
     return {
         description: content,

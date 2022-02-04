@@ -1,5 +1,5 @@
-import {getUserList} from "./Valorant/auth.js";
-import {getShop, getSkin} from "./Valorant/skins.js";
+import {getUserList} from "../Valorant/auth.js";
+import {getShop, getSkin} from "../Valorant/skins.js";
 import fs from "fs";
 import {removeAlertActionRow, skinNameAndEmoji, VAL_COLOR_1} from "./util.js";
 
@@ -15,14 +15,14 @@ export const setClient = (theClient) => client = theClient;
  * There should only be one alert per ID/UUID pair, aka each user can have one alert per skin.
  */
 
-export const loadAlerts = (filename="alerts.json") => {
+export const loadAlerts = (filename="./storage/alerts.json") => {
     try {
         alerts = JSON.parse(fs.readFileSync(filename).toString());
         saveAlerts(filename);
     } catch(e) {}
 }
 
-const saveAlerts = (filename="alerts.json") => {
+const saveAlerts = (filename="./storage/alerts.json") => {
     fs.writeFileSync(filename, JSON.stringify(alerts, null, 2));
 }
 

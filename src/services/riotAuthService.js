@@ -1,7 +1,7 @@
-import config from "../src/config.js";
+import config from '../config.js';
 import fs from "fs";
 
-import {fetch, parseSetCookie, stringifyCookies, extractTokensFromUri, tokenExpiry} from "../src/util.js";
+import {fetch, parseSetCookie, stringifyCookies, extractTokensFromUri, tokenExpiry} from "../util.js";
 
 let users;
 

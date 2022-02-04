@@ -1,5 +1,6 @@
+ec2-ssh.sh
+.idea
 /node_modules
-alerts.json
-skins.json
-users.json
-config.json
+storage/alerts.json
+storage/skins.json
+storage/users.json

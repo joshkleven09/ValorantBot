@@ -3,7 +3,7 @@ import fs from "fs";
 export let config = {};
 export default config;
 
-export const loadConfig = (filename="config.json") => {
+export const loadConfig = (filename="./config/config.json") => {
     let loadedConfig = {};
     try {
         loadedConfig = fs.readFileSync(filename, 'utf-8');
