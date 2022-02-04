@@ -305,13 +305,13 @@ export const getPlayers = async (userId, playerIds) => {
     return json;
 }
 
-export const getMMR = async (userId, mmrToGet) => {
+export const getLatestCompResult = async (userId, mmrToGet) => {
     const authSuccess = await authUser(userId);
     if(!authSuccess) return;
 
     const user = getUser(userId);
     
-    console.debug(`Getting MMR data for player ${mmrToGet}`);
+    console.debug(`Getting latest comp matches for player ${mmrToGet}`);
     const req = await fetch(`https://pd.${user.region}.a.pvp.net/mmr/v1/players/${mmrToGet}/competitiveupdates?queue=competitive`, {
         headers: {
             "Authorization": "Bearer " + user.rso,
@@ -319,12 +319,36 @@ export const getMMR = async (userId, mmrToGet) => {
             "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9",
         }
     });
-    console.assert(req.statusCode === 200, `Valorant get MMR for player ${mmrToGet} is ${req.statusCode}!`, req);
+    console.assert(req.statusCode === 200, `Valorant  latest comp matches for player ${mmrToGet} is ${req.statusCode}!`, req);
 
     const json = JSON.parse(req.body);
     if(isMaintenance(json)) return MAINTENANCE;
 
     return json.Matches[0];
+}
+
+
+export const getMMRs = async (userId, mmrToGet) => {
+    const authSuccess = await authUser(userId);
+    if(!authSuccess) return;
+
+    const user = getUser(userId);
+    
+    console.debug(`Getting MMR data for player ${mmrToGet}`);
+    const req = await fetch(`https://pd.${user.region}.a.pvp.net/mmr/v1/players/${mmrToGet}`, {
+        headers: {
+            "Authorization": "Bearer " + user.rso,
+            "X-Riot-Entitlements-JWT": user.ent,
+            "X-Riot-ClientPlatform": "ew0KCSJwbGF0Zm9ybVR5cGUiOiAiUEMiLA0KCSJwbGF0Zm9ybU9TIjogIldpbmRvd3MiLA0KCSJwbGF0Zm9ybU9TVmVyc2lvbiI6ICIxMC4wLjE5MDQyLjEuMjU2LjY0Yml0IiwNCgkicGxhdGZvcm1DaGlwc2V0IjogIlVua25vd24iDQp9",
+            "X-Riot-ClientVersion": "release-04.01-11-659041"
+        }
+    });
+    console.assert(req.statusCode === 200, `Valorant get MMR for player ${mmrToGet} is ${req.statusCode}!`, req);
+
+    const json = JSON.parse(req.body);
+    if(isMaintenance(json)) return MAINTENANCE;
+    
+    return json.QueueSkills.competitive.SeasonalInfoBySeasonID;
 }
 
 export const getLatestCompTiers = async () => {
@@ -343,14 +367,12 @@ export const getAgents = async () => {
     return jsonData;
 }
 
-export const getPreviousSeasonId = async (currentSeasonId) => {
+export const getCompSeasons = async () => {
     console.debug(`Getting season data`);
     const response = await fetch(`https://valorant-api.com/v1/seasons/competitive`);
     console.assert(response.statusCode === 200, `Valorant get comp seasons is ${response.statusCode}!`, response);
     const jsonData = JSON.parse(response.body).data
-    const actualSeasons = jsonData.filter(data => data.borders != null)
-    const currentSeasonIdx = actualSeasons.findIndex(data => data.seasonUuid === currentSeasonId)
-    return actualSeasons[currentSeasonId - 1].seasonUuid
+    return jsonData.filter(data => data.borders != null)
 }
 
 

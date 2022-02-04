@@ -1,4 +1,4 @@
-import {getBalance, getSkin, getShop, refreshSkinList, searchSkin, getCurrentMatchId, getMatch, getPlayers, getMMR, getLatestCompTiers, getAgents} from "./Valorant/skins.js";
+import {getBalance, getSkin, getShop, refreshSkinList, searchSkin, getCurrentMatchId, getMatch, getPlayers, getLatestCompResult, getLatestCompTiers, getAgents, getCompSeasons, getMMRs} from "./Valorant/skins.js";
 import {
     authUser, cleanupAccounts,
     deleteUser,
@@ -577,6 +577,7 @@ client.on("interactionCreate", async (interaction) => {
                 //todo what is this and why is it needed if we just await everything anyways
                 await interaction.deferReply({ephemeral: interaction.commandName !== "match-share"});
 
+                const compSeasons = await getCompSeasons()
                 const compTiers = await getLatestCompTiers()
                 for await (const tier of compTiers) {
                     await compTierEmoji(interaction.channel.guild, tier.tierName.toLowerCase().replaceAll(" ", "_"), tier.smallIcon, externalEmojisAllowed(interaction.channel))
@@ -697,8 +698,15 @@ client.on("interactionCreate", async (interaction) => {
                 // ]
 
                 for await (const player of players.slice(0, 10)) {
-                    const playerLatestTier = (await getMMR(interaction.user.id, player.Subject)).TierAfterUpdate;
+                    const latestCompResult = (await getLatestCompResult(interaction.user.id, player.Subject));
+                    const playerLatestTier = latestCompResult.TierAfterUpdate;
+                    const currentSeasonIdx = compSeasons.findIndex(data => data.seasonUuid === latestCompResult.SeasonID)
+                    const lastSeasonId = compSeasons[currentSeasonIdx - 1].seasonUuid
+                    const playerMMRsBySeason = (await getMMRs(interaction.user.id, player.Subject))
+                    const lastSeasonTier = playerMMRsBySeason[lastSeasonId].CompetitiveTier
+                    
                     player.LatestTier = await compTier(compTiers.find(tier => tier.tier === playerLatestTier), interaction.channel)
+                    player.LastSeasonTier = await compTier(compTiers.find(tier => tier.tier === lastSeasonTier), interaction.channel)
                 }
                 const interactionPlayer = players.find(player => player.Subject === valorantUser.puuid) || {Team: "Blue"}
 
@@ -710,8 +718,8 @@ client.on("interactionCreate", async (interaction) => {
                     title: interactionPlayer.Team === "Blue" ? "Your Team": "Enemy Team",
                     fields: blueTeam.map(player => {
                         return {
-                            name: `${player.LatestTier}\t\t${player.Agent}\t\t${player.GameName}`,
-                            value: `Level: ${player.AccountLevel}`
+                            name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
+                            value: `Level: ${player.AccountLevel}\nLast: ${player.LastSeasonTier}`
                         }
                     })
                 }
@@ -721,8 +729,8 @@ client.on("interactionCreate", async (interaction) => {
                     title: interactionPlayer.Team === "Red" ? "Your Team": "Enemy Team",
                     fields: redTeam.map(player => {
                         return {
-                            name: `${player.LatestTier}\t\t${player.Agent}\t\t${player.GameName}`,
-                            value: `Level: ${player.AccountLevel}`
+                            name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
+                            value: `Level: ${player.AccountLevel}\nLast: ${player.LastSeasonTier}`
                         }
                     })
                 }
