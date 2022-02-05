@@ -288,7 +288,7 @@ client.on("interactionCreate", async (interaction) => {
                     fields: blueTeam.map(player => {
                         return {
                             name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
-                            value: `Level: ${player.AccountLevel}\nLast: ${player.LastSeasonTier}`
+                            value: `Level: ${player.AccountLevel} Last: ${player.LastSeasonTier}`
                         }
                     })
                 }
@@ -299,7 +299,7 @@ client.on("interactionCreate", async (interaction) => {
                     fields: redTeam.map(player => {
                         return {
                             name: `${player.LatestTier}\t${player.Agent}\t${player.GameName}`,
-                            value: `Level: ${player.AccountLevel}\nLast: ${player.LastSeasonTier}`
+                            value: `Level: ${player.AccountLevel} Last: ${player.LastSeasonTier}`
                         }
                     })
                 }
