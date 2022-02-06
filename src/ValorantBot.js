@@ -27,7 +27,7 @@ import {
 import {login, loginWithCookies, removeUser, twoFactorAuth} from "./userService.js"
 import {creatShopAlert, getUserShopAlerts, getValorantBalance, getValorantShop} from "./shopService.js"
 import cron from "node-cron"
-import {cleanupAccounts, getUser, loadUserData} from "../Valorant/auth.js"
+import {cleanupAccounts, getUser, loadUserData} from "./services/riotAuthService.js"
 import {loadConfig} from "./config.js"
 import {basicEmbed} from "./util.js"
 import {compTierEmoji} from "./emoji.js";
