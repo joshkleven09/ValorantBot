@@ -1,4 +1,4 @@
-import config from '../config.js';
+import config from "../config.js";
 import fs from "fs";
 
 import {fetch, parseSetCookie, stringifyCookies, extractTokensFromUri, tokenExpiry} from "../util.js";
@@ -6,10 +6,10 @@ import {fetch, parseSetCookie, stringifyCookies, extractTokensFromUri, tokenExpi
 let users;
 
 export const loadUserData = () => {
-    if(!users) try {
+    if (!users) try {
         users = JSON.parse(fs.readFileSync("./storage/users.json", 'utf-8'));
         saveUserData();
-    } catch(e) {
+    } catch (e) {
         users = {};
     }
 }
@@ -31,10 +31,10 @@ export const getUserList = () => {
 export const authUser = async (id) => {
     // doesn't check if token is valid, only checks it hasn't expired
     const user = getUser(id);
-    if(!user) return;
+    if (!user) return;
 
     const rsoExpiry = tokenExpiry(user.rso);
-    if(rsoExpiry - Date.now() > 10_000) return true;
+    if (rsoExpiry - Date.now() > 10_000) return true;
 
     return await refreshToken(id);
 }
@@ -84,22 +84,22 @@ export const redeemUsernamePassword = async (id, username, password) => {
     };
 
     const json2 = JSON.parse(req2.body);
-    if(json2.type === 'error') {
-        if(json2.error === "auth_failure") console.error("Authentication failure!", json2);
+    if (json2.type === 'error') {
+        if (json2.error === "auth_failure") console.error("Authentication failure!", json2);
         else console.error("Unknown auth error!", json2);
         return false;
     }
 
     users[id] = user;
 
-    if(json2.type === 'response') {
+    if (json2.type === 'response') {
         await processAuthResponse(id, {username, password, cookies}, json2);
         return {success: true};
-    } else if(json2.type === 'multifactor') { // 2FA
+    } else if (json2.type === 'multifactor') { // 2FA
         user.waiting2FA = Date.now();
 
         user.cookies = cookies;
-        if(config.storePasswords) {
+        if (config.storePasswords) {
             user.login = username;
             user.password = password;
         }
@@ -134,7 +134,7 @@ export const redeem2FACode = async (id, code) => {
     };
 
     const json = JSON.parse(req.body);
-    if(json.error === "multifactor_attempt_failed") {
+    if (json.error === "multifactor_attempt_failed") {
         console.error("Authentication failure!", json);
         return false;
     }
@@ -153,7 +153,7 @@ const processAuthResponse = async (id, authData, resp) => {
     user.idt = idt;
 
     // save either cookies or login/password
-    if(config.storePasswords) {
+    if (config.storePasswords) {
         user.login = authData.username;
         user.password = authData.password; // I should encrypt this
         delete user.cookies;
@@ -186,7 +186,7 @@ const getUserInfo = async (id) => {
     console.assert(req.statusCode === 200, `User info status code is ${req.statusCode}!`, req);
 
     const json = JSON.parse(req.body);
-    if(json.acct) return {
+    if (json.acct) return {
         puuid: json.sub,
         username: json.acct.game_name + "#" + json.acct.tag_line
     }
@@ -235,10 +235,10 @@ export const redeemCookies = async (id, cookies) => {
     });
     console.assert(req.statusCode === 303, `Cookie Reauth status code is ${req.statusCode}!`, req);
 
-    if(req.headers.location.startsWith("/login")) return false; // invalid cookies
+    if (req.headers.location.startsWith("/login")) return false; // invalid cookies
 
     users[id] = user;
-    if(!user.login || !user.password) user.cookies = {
+    if (!user.login || !user.password) user.cookies = {
         ...user.cookies,
         ...parseSetCookie(req.headers['set-cookie'])
     };
@@ -260,21 +260,21 @@ export const redeemCookies = async (id, cookies) => {
 
 export const refreshToken = async (id) => {
     const user = getUser(id);
-    if(!user) return;
+    if (!user) return;
 
     let success;
-    if(user.login && user.password) success = await redeemUsernamePassword(id, user.login, user.password);
-    else if(user.cookies) success = await redeemCookies(id, stringifyCookies(user.cookies));
+    if (user.login && user.password) success = await redeemUsernamePassword(id, user.login, user.password);
+    else if (user.cookies) success = await redeemCookies(id, stringifyCookies(user.cookies));
     else success = false;
 
-    if(!success) deleteUser(id);
+    if (!success) deleteUser(id);
     return success;
 }
 
 export const cleanupAccounts = () => {
-    for(const [id, user] of Object.entries(users)) {
-        if(user.waiting2FA && Date.now() - user.waiting2FA > 10 * 60 * 1000) deleteUser(id);
-        else if(!user.cookies && (!user.login || !user.password)) deleteUser(id);
+    for (const [id, user] of Object.entries(users)) {
+        if (user.waiting2FA && Date.now() - user.waiting2FA > 10 * 60 * 1000) deleteUser(id);
+        else if (!user.cookies && (!user.login || !user.password)) deleteUser(id);
     }
 }
 

@@ -7,7 +7,7 @@ import {
     redeem2FACode,
     redeemCookies,
     redeemUsernamePassword
-} from "../Valorant/auth.js";
+} from "./services/riotAuthService.js";
 import {loadConfig} from "./config.js";
 import {compTierEmoji, RadEmoji, VPEmoji} from "./emoji.js";
 import {

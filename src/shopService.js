@@ -1,4 +1,4 @@
-import {authUser, getUser} from "../Valorant/auth.js";
+import {authUser, getUser} from "./services/riotAuthService.js";
 import {
     basicEmbed,
     emojiToString,

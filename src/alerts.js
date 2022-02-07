@@ -1,4 +1,4 @@
-import {getUserList} from "../Valorant/auth.js";
+import {getUserList} from "./services/riotAuthService.js";
 import {getShop, getSkin} from "../Valorant/skins.js";
 import fs from "fs";
 import {removeAlertActionRow, skinNameAndEmoji, VAL_COLOR_1} from "./util.js";

@@ -1,6 +1,6 @@
 import {getUser, redeemUsernamePassword} from "./services/riotAuthService.js"
 import {escapeMarkdown} from "./util.js"
-import {deleteUser, redeem2FACode, redeemCookies} from "../Valorant/auth.js"
+import {deleteUser, redeem2FACode, redeemCookies} from "./services/riotAuthService.js"
 import {removeAlertsFromUser} from "./alerts.js"
 
 export const login = (discordId, discordTag, riotUsername, riotPassword) => {

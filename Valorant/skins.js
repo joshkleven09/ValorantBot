@@ -3,7 +3,7 @@ import fs from "fs";
 import Fuse from "fuse.js";
 
 import {asyncReadJSONFile, fetch, isMaintenance, MAINTENANCE} from "../src/util.js";
-import {authUser, deleteUser, getUser, getUserList} from "./auth.js";
+import {authUser, deleteUser, getUser, getUserList} from "../src/services/riotAuthService.js";
 import config from "../src/config.js";
 
 const formatVersion = 2;
