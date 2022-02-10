@@ -78,7 +78,7 @@ export const getNightMarket = (discordId, discordTag, discordChannel, discordGui
                         url: skin.icon
                     }
                 }
-                if (bonusOffer.discountedPrice) embed.description = `${emojiString} ${bonusOffer.discountedPrice}`
+                if (bonusOffer.discountedPrice) embed.description = `${emojiString} ${bonusOffer.discountedPrice} ~~${bonusOffer.originalPrice}~~`
                 embeds.push(embed)
             }
 
