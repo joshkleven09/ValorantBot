@@ -21,6 +21,7 @@ export const loadConfig = (filename="./config/config.json") => {
     applyConfig(loadedConfig, "refreshSkins", "10 0 0 * * *");
     applyConfig(loadedConfig, "checkGameVersion", "*/15 * * * *");
     applyConfig(loadedConfig, "cleanupAccounts", "0 * * * *");
+    applyConfig(loadedConfig, "refreshAllTokens", "*/20 * * * *");
     applyConfig(loadedConfig, "storePasswords", false);
 
     saveConfig(filename, {...loadedConfig, ...config});

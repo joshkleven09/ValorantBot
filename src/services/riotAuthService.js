@@ -28,6 +28,14 @@ export const getUserList = () => {
     return Object.keys(users);
 }
 
+export const refreshAllTokens = async () => {
+    console.log("Refreshing all user tokens...")
+    for await (const userId of getUserList()) {
+        console.log(`...refreshing for user ${userId}`)
+        await refreshToken(userId)
+    }
+}
+
 export const authUser = async (id) => {
     // doesn't check if token is valid, only checks it hasn't expired
     const user = getUser(id);

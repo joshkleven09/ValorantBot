@@ -27,7 +27,7 @@ import {
 import {login, loginWithCookies, removeUser, twoFactorAuth} from "./userService.js"
 import {creatShopAlert, getUserShopAlerts, getValorantBalance, getValorantShop} from "./shopService.js"
 import cron from "node-cron"
-import {cleanupAccounts, getUser, loadUserData} from "./services/riotAuthService.js"
+import {cleanupAccounts, getUser, loadUserData, refreshAllTokens} from "./services/riotAuthService.js"
 import {loadConfig} from "./config.js"
 import {basicEmbed} from "./util.js"
 import {compTierEmoji} from "./emoji.js";
@@ -85,8 +85,7 @@ client.on("messageCreate", async (message) => {
 
 client.on("ready", async () => {
     console.log(`Logged in as ${client.user.tag}!`)
-
-    console.log("Loading skins...");
+    console.log("Loading skins...")
     refreshSkinList().then(() => console.log("Skins loaded!"))
 
     setClient(client)
@@ -95,10 +94,14 @@ client.on("ready", async () => {
     cron.schedule(config.refreshSkins, checkAlerts, {timezone: "GMT"})
 
     // check for new valorant version every 15mins
-    cron.schedule(config.checkGameVersion, () => refreshSkinList(true))
+    cron.schedule(config.checkGameVersion, () => refreshSkinList(true), {timezone: "GMT"})
 
     // cleanup accounts every hour
-    cron.schedule(config.checkGameVersion, cleanupAccounts)
+    cron.schedule(config.checkGameVersion, cleanupAccounts, {timezone: "GMT"})
+
+    // refresh user tokens every hour
+    // cron.schedule(config.refreshAllTokens, refreshAllTokens, {timezone: "GMT"})
+    await refreshAllTokens()
 })
 
 client.on("interactionCreate", async (interaction) => {
