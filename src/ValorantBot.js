@@ -111,6 +111,10 @@ client.on("interactionCreate", async (interaction) => {
         console.log(`${interaction.user.tag} used /${interaction.commandName}`)
 
         switch (interaction.commandName) {
+            case "sugma": {
+                interaction.reply({embeds: [basicEmbed("**DEEZ NUTZ!**")], ephemeral: false})
+                break
+            }
             //USER commands
             case LOGIN_CMD:
                 login(
@@ -479,5 +483,9 @@ const commands = [
     {
         name: MATCH_SHARE_CMD,
         description: "Fetch your current match information and share it with the channel"
+    },
+    {
+        name: "sugma",
+        description: "?"
     }
 ]
