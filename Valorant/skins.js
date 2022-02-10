@@ -210,7 +210,11 @@ export const getShop = async (id) => {
 
     return {
         offers: json.SkinsPanelLayout.SingleItemOffers,
-        expires: json.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds
+        expires: json.SkinsPanelLayout.SingleItemOffersRemainingDurationInSeconds,
+        bonus: json.BonusStore ? json.BonusStore.BonusStoreOffers.map(bonusOffer => {
+            return {skinId: bonusOffer.Offer.OfferID, discountedPrice: Object.values(bonusOffer.DiscountCosts)[0]}
+        }) : undefined,
+        bonusExpires: json.BonusStore ? json.BonusStore.BonusStoreRemainingDurationInSeconds : undefined
     };
 }
 

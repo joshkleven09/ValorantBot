@@ -50,6 +50,44 @@ export const getValorantShop = (discordId, discordTag, discordChannel, discordGu
         .catch(() => [basicEmbed("Could not fetch your shop, most likely you got logged out. Try logging in again.")])
 }
 
+export const getNightMarket = (discordId, discordTag, discordChannel, discordGuild) => {
+    const user = getUser(discordId)
+
+    if (!user) return Promise.resolve([basicEmbed("**You're not registered with the bot!** Try `/login`.")])
+
+    return getShop(discordId)
+        .then(async shop => {
+            const emojiPromise = VPEmoji(discordGuild, externalEmojisAllowed(discordChannel))
+            if (!shop) return [basicEmbed("Could not fetch your Night Market, most likely you got logged out. Try logging in again.")]
+            if (shop === MAINTENANCE) return [basicEmbed("**Valorant servers are currently down for maintenance!** Try again later.")]
+            if (!shop.bonus) return [basicEmbed("**The Night Market does not currently seem to be active!")]
+
+            let embeds = [{
+                description: `Night Market for **${user.username}** (ends <t:${Math.floor(Date.now() / 1000) + shop.bonusExpires}:R>)`,
+                color: VAL_COLOR_1
+            }]
+
+            const emojiString = emojiToString(await emojiPromise) || "Discounted Price:"
+
+            for (const bonusOffer of shop.bonus) {
+                const skin = await getSkin(bonusOffer.skinId, discordId)
+                const embed = {
+                    title: await skinNameAndEmoji(skin, discordChannel),
+                    color: VAL_COLOR_2,
+                    thumbnail: {
+                        url: skin.icon
+                    }
+                }
+                if (bonusOffer.discountedPrice) embed.description = `${emojiString} ${bonusOffer.discountedPrice}`
+                embeds.push(embed)
+            }
+
+            console.log(`Sent ${discordTag}'s night market!`)
+            return embeds
+        })
+        .catch(() => [basicEmbed("Could not fetch your shop, most likely you got logged out. Try logging in again.")])
+}
+
 export const getValorantBalance = (discordId, discordTag, discordChannel, discordGuild) => {
     const user = getUser(discordId)
 

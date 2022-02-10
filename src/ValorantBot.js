@@ -25,7 +25,7 @@ import {
     skinNameAndEmoji, VAL_BLUE_TEAM_COLOR, VAL_RED_TEAM_COLOR
 } from "./util.js"
 import {login, loginWithCookies, removeUser, twoFactorAuth} from "./userService.js"
-import {creatShopAlert, getUserShopAlerts, getValorantBalance, getValorantShop} from "./shopService.js"
+import {creatShopAlert, getNightMarket, getUserShopAlerts, getValorantBalance, getValorantShop} from "./shopService.js"
 import cron from "node-cron"
 import {cleanupAccounts, getUser, loadUserData, refreshAllTokens} from "./services/riotAuthService.js"
 import {loadConfig} from "./config.js"
@@ -38,6 +38,8 @@ const UNDEPLOY = "!undeploy"
 
 const SHOP_CMD = "shop"
 const SHOP_SHARE_CMD = "shop-share"
+const NIGHT_MARKET_CMD = "night-market"
+const NIGHT_MARKET_SHARE_CMD = "night-market-share"
 const BALANCE_CMD = "balance"
 const ALERT_CMD = "alert"
 const ALERTS_CMD = "alerts"
@@ -144,7 +146,17 @@ client.on("interactionCreate", async (interaction) => {
                     interaction.user.tag,
                     interaction.channel,
                     interaction.guild
-                ).then(embeds => interaction.reply({embeds, ephemeral: interaction.commandName !== "shop-share"}))
+                ).then(embeds => interaction.reply({embeds, ephemeral: interaction.commandName !== SHOP_SHARE_CMD}))
+                break
+            }
+            case NIGHT_MARKET_SHARE_CMD:
+            case NIGHT_MARKET_CMD: {
+                getNightMarket(
+                    interaction.user.id,
+                    interaction.user.tag,
+                    interaction.channel,
+                    interaction.guild
+                ).then(embeds => interaction.reply({embeds, ephemeral: interaction.commandName !== NIGHT_MARKET_SHARE_CMD}))
                 break
             }
             case BALANCE_CMD: {
@@ -186,7 +198,7 @@ client.on("interactionCreate", async (interaction) => {
                 });
 
                 //todo what is this and why is it needed if we just await everything anyways
-                await interaction.deferReply({ephemeral: interaction.commandName !== "match-share"});
+                await interaction.deferReply({ephemeral: interaction.commandName !== MATCH_SHARE_CMD});
 
                 const compSeasons = await getCompSeasons()
                 const compTiers = await getLatestCompTiers()
@@ -389,6 +401,14 @@ const commands = [
     {
         name: SHOP_SHARE_CMD,
         description: "Show your current daily shop to the channel"
+    },
+    {
+        name: NIGHT_MARKET_CMD,
+        description: "Show your Night Market to yourself"
+    },
+    {
+        name: NIGHT_MARKET_SHARE_CMD,
+        description: "Share your Night Market with the channel"
     },
     {
         name: BALANCE_CMD,
